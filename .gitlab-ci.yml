@@ -4,8 +4,6 @@ default:
 
 variables:
   DOCKER_IMAGE: fayvori/react-gitlabcicd
-  DOCKER_USER: fayvori 
-  DOCKER_AUTH_TOKEN: dckr_pat_TzskmB2IzwZVmQJ9bSJNqbOaP_U
 
 stages:
   - test 
