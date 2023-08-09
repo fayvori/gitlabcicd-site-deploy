@@ -8,7 +8,6 @@ variables:
   DOCKER_AUTH_TOKEN: dckr_pat_TzskmB2IzwZVmQJ9bSJNqbOaP_U
 
 stages:
-  - build 
   - test 
   - deploy 
 
@@ -21,7 +20,10 @@ test:
   before_script:
     - npm i --silent
   script:
-    - CI=true npm test 
+    - CI=true npm test
+  tags:
+    - netlify 
+    - shared
 
 deploy:
   stage: deploy
@@ -32,4 +34,7 @@ deploy:
     - npm run build
   script:
     - npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --dir build 
+  tags:
+    - netlify
+    - shared
   when: manual
