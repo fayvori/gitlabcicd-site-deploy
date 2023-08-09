@@ -1,0 +1,35 @@
+default:
+  image: node:18-alpine3.17
+  interruptible: false
+
+variables:
+  DOCKER_IMAGE: fayvori/react-gitlabcicd
+  DOCKER_USER: fayvori 
+  DOCKER_AUTH_TOKEN: dckr_pat_TzskmB2IzwZVmQJ9bSJNqbOaP_U
+
+stages:
+  - build 
+  - test 
+  - deploy 
+
+cache:
+  paths:
+    - node_modules/
+
+test:
+  stage: test
+  before_script:
+    - npm i --silent
+  script:
+    - CI=true npm test 
+
+deploy:
+  stage: deploy
+  only:
+    - master
+  before_script:
+    - npm i --silent
+    - npm run build
+  script:
+    - npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --dir build 
+  when: manual

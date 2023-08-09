@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# Requirements
+- Node
+- Netlify account
+- GitLab account
+- Availible GitLab runner
+- netlify-cli
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Implementation
+First we need to create a new react app using `create-react-app` utility
 
-## Available Scripts
+// create-react-app image
 
-In the project directory, you can run:
+**Also don't forget to create a new personal access token on netlify website [here](https://app.netlify.com/user/applications)**
 
-### `npm start`
+After that create a new file inside app folder called `netlify.toml`. With following content:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```toml
+[build]
+  publish = "build"
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The publish parameter represents our output folder after executing `npm run build` command.
 
-### `npm test`
+Then we need to register our site on netlify site. I will process with command line. For register site on netlify run the following command inside app folder:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+netlify sites:create -n YOU_DESIRED_SITE_DOMAIN (e.g. gitlabcicd-site-deploy)
+```
 
-### `npm run build`
+Output should be like this:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![netlify sites:create output](./docs/images/netlify-create.jpeg)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+And for now we are done with netlify part. Let's jump out into GitLab part!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Create a new gitlab repository as shown down below:
 
-### `npm run eject`
+![gitlab repository creating process](./docs/images/create-gitlab-project.jpeg)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+After that go to **Settings > CI/CD > Variables** and click *Add variable*. We need four variables in order to deploy our website to netlify `$NETLIFY_SITE_ID` `$NETLIFY_AUTH_TOKEN` `$DOCKER_USER` `$DOCKER_USER_PASSWORD`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![gitlab vars section](./docs/images/gitlab-vars.jpeg)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+The next step is to set up out gitlab ci/cd pipeline. First create Dockerfile as shown below:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```Dockerfile
+FROM node:18-alpine3.17 as build
+WORKDIR /app
 
-## Learn More
+ENV PATH /app/node_modules/.bin:$PATH
+COPY package.json /app/package.json
+RUN npm install --silent
+RUN npm install react-scripts -g --silent
+COPY . /app
+RUN npm run build
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# production environment
+FROM nginx:1.16.0-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+And now we can finally proceed to our `.gitlab-ci.yml` file
 
-### Code Splitting
+```yaml
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Pipeline results
+Ready to use site
+? Notification
