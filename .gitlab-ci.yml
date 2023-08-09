@@ -28,7 +28,7 @@ test:
 deploy:
   stage: deploy
   only:
-    - master
+    - main
   before_script:
     - npm i --silent
     - npm run build
