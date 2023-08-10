@@ -33,6 +33,7 @@ Output should be like this:
 
 And for now we are done with netlify part. Let's jump out into GitLab part!
 
+*NOTE: if you want register self-hosted funner check out my other repo [here](https://github.com/fayvori/iac-gitlab-runner)*
 Create a new gitlab repository as shown down below:
 
 ![gitlab repository creating process](./docs/images/create-gitlab-project.jpeg)
