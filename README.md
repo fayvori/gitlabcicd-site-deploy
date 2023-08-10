@@ -2,7 +2,7 @@
 - Node
 - Netlify account
 - GitLab account
-- Availible GitLab runner (*NOTE: if you want register self-hosted funner check out my other repo [here](https://github.com/fayvori/iac-gitlab-runner)*)
+- Availible GitLab runner (*NOTE: if you want register self-hosted runner check out my other repo [here](https://github.com/fayvori/iac-gitlab-runner)*)
 - netlify-cli
 
 # Implementation
